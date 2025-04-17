@@ -2,18 +2,31 @@ package arbitraryarithmetic;
 
 public class AInteger {
 
+    public String literal;
     public String value;
+    public boolean isNegative = false;
 
     public AInteger() {
         this.value = "0";
+        this.literal = "0";
     }
 
     public AInteger(String value) {
+        this.literal = value;
+        if (value.charAt(0) == '-') {
+            this.isNegative = true;
+            value = value.substring(1);
+        } else if (value.charAt(0) == '+') {
+            this.isNegative = false;
+            value = value.substring(1);
+        }
         this.value = value;
     }
 
     public AInteger (AInteger aInteger) {
+        this.literal = aInteger.literal;
         this.value = aInteger.value;
+        this.isNegative = aInteger.isNegative;
     }
 
     public static AInteger parse(String s){
@@ -24,6 +37,14 @@ public class AInteger {
         String result = "";
         String stra = a.value;
         String strb = b.value;
+
+        if (a.isNegative && b.isNegative) {
+            return new AInteger("-" + (AInteger.add(new AInteger(stra), new AInteger(strb))).value);
+        } else if (a.isNegative) {
+            return AInteger.subtract(new AInteger (b.value), new AInteger (a.value));
+        } else if (b.isNegative) {
+            return AInteger.subtract(new AInteger(a.value), new AInteger(b.value));
+        }
 
         int carry = 0;
 
@@ -56,6 +77,14 @@ public class AInteger {
         String stra = a.value;
         String strb = b.value;
 
+        if (a.isNegative && !(b.isNegative)){
+            return new AInteger("-" + (AInteger.add(new AInteger(stra), new AInteger(strb))).value);
+        } else if (!(a.isNegative) && b.isNegative) {
+            return AInteger.add(new AInteger(a.value), new AInteger(b.value));
+        } else if (a.isNegative && b.isNegative) {
+            return AInteger.subtract(new AInteger(b.value), new AInteger(a.value));
+        }
+
         int borrow = 0;
 
         int i = stra.length() - 1;
@@ -80,6 +109,7 @@ public class AInteger {
             result = diff + result;
         }
         if ( borrow != 0) {
+            System.out.println("Error: Negative result");
             AInteger resultobj = AInteger.subtract(b, a);
             result = resultobj.value;
             result = "-" + result;
@@ -88,13 +118,13 @@ public class AInteger {
         return new AInteger(result);
     }
     public static void main(String[] args) {
-        AInteger num1 = new AInteger("123");
+        AInteger num1 = new AInteger("-123");
         AInteger num2 = new AInteger("456");
 
         AInteger sum = AInteger.add(num1, num2);
-        System.out.println("Sum: " + sum.value);
+        System.out.println("Sum: " + sum.literal);
 
         AInteger diff = AInteger.subtract(num1, num2);
-        System.out.println("Difference: " + diff.value);
+        System.out.println("Difference: " + diff.literal);
     }
 }
