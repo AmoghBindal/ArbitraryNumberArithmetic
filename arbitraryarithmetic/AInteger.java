@@ -12,15 +12,28 @@ public class AInteger {
     }
 
     public AInteger(String value) {
+        if (value == null) {
+            this.value = "0";
+            this.literal = "0";
+            return;
+        }
+        if (value.isEmpty()) {
+            this.value = "0";
+            this.literal = "0";
+            return;
+        }
         this.literal = value;
         if (value.charAt(0) == '-') {
             this.isNegative = true;
-            value = value.substring(1);
+            this.value = value.substring(1);
+            return;
         } else if (value.charAt(0) == '+') {
             this.isNegative = false;
-            value = value.substring(1);
+            this.value = value.substring(1);
         }
-        this.value = value;
+        else{
+            this.value = value;
+            }        
     }
 
     public AInteger (AInteger aInteger) {
@@ -117,6 +130,75 @@ public class AInteger {
 
         return new AInteger(result);
     }
+
+    public static AInteger mul(AInteger a, AInteger b) {
+        String result = "";
+        String stra = a.value;
+        String strb = b.value;
+
+        if (a.isNegative && b.isNegative) {
+            return new AInteger(AInteger.mul(new AInteger(stra), new AInteger(strb)).value);
+        } else if (a.isNegative) {
+            return new AInteger("-" + (AInteger.mul(new AInteger(stra), new AInteger(strb))).value);
+        } else if (b.isNegative) {
+            return new AInteger("-" + (AInteger.mul(new AInteger(stra), new AInteger(strb))).value);
+        }
+
+        for (int i = stra.length() - 1; i >= 0; i--) {
+            int digit1 = stra.charAt(i) - '0';
+            String tempResult = "";
+            int carry = 0;
+            for (int j = strb.length() - 1; j >= 0; j--) {
+                int digit2 = strb.charAt(j) - '0';
+                int product = digit1 * digit2 + carry;
+                carry = product / 10;
+                tempResult = (product % 10) + tempResult;
+            }
+            if (carry != 0) {
+                tempResult = carry + tempResult;
+            }
+            for (int k = 0; k < stra.length() - 1 - i; k++) {
+                tempResult += "0";
+            }
+            result = AInteger.add(new AInteger(result), new AInteger(tempResult)).value;
+        }
+
+        return new AInteger(result);
+
+
+    }
+
+    public static AInteger div(AInteger a, AInteger b) {
+        String result = "";
+        String stra = a.value;
+        String strb = b.value;
+        int lena = stra.length();
+        int lenb = strb.length();
+
+        if (a.isNegative && b.isNegative) {
+            return new AInteger(AInteger.div(new AInteger(stra), new AInteger(strb)).value);
+        } else if (a.isNegative) {
+            return new AInteger("-" + (AInteger.div(new AInteger(stra), new AInteger(strb))).value);
+        } else if (b.isNegative) {
+            return new AInteger("-" + (AInteger.div(new AInteger(stra), new AInteger(strb))).value);
+        }
+
+        int digit = lenb;
+
+        while (lena > lenb) {
+            String temp = strb;
+            int i = 0;
+            while (lena >= lenb) {
+                
+            }
+            result += count;
+            lena--;
+        }
+
+        
+
+        return new AInteger(result);
+    }
     public static void main(String[] args) {
         AInteger num1 = new AInteger("-123");
         AInteger num2 = new AInteger("456");
@@ -126,5 +208,8 @@ public class AInteger {
 
         AInteger diff = AInteger.subtract(num1, num2);
         System.out.println("Difference: " + diff.literal);
+
+        AInteger product = AInteger.mul(num1, num2);
+        System.out.println("Product: " + product.literal);
     }
 }
