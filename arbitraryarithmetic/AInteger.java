@@ -6,12 +6,28 @@ public class AInteger {
     public String value;
     public boolean isNegative = false;
 
+    public static String removeLeadingZeros(String number) {
+
+        int index = 0;
+
+        while (index < number.length() && number.charAt(index) == '0') {
+            index++;
+        }
+        if (index == number.length()) {
+            return "0";
+        }
+        return number.substring(index);
+    }
+    
+
     public AInteger() {
         this.value = "0";
         this.literal = "0";
     }
 
     public AInteger(String value) {
+
+        value = removeLeadingZeros(value);
         if (value == null) {
             this.value = "0";
             this.literal = "0";
@@ -122,7 +138,6 @@ public class AInteger {
             result = diff + result;
         }
         if ( borrow != 0) {
-            System.out.println("Error: Negative result");
             AInteger resultobj = AInteger.subtract(b, a);
             result = resultobj.value;
             result = "-" + result;
@@ -175,6 +190,10 @@ public class AInteger {
         int lena = stra.length();
         int lenb = strb.length();
 
+        if (b.value.equals("0")) {
+            throw new ArithmeticException("Division by zero");
+        }
+
         if (a.isNegative && b.isNegative) {
             return new AInteger(AInteger.div(new AInteger(stra), new AInteger(strb)).value);
         } else if (a.isNegative) {
@@ -185,23 +204,28 @@ public class AInteger {
 
         int digit = lenb;
 
-        while (lena > lenb) {
-            String temp = strb;
-            int i = 0;
-            while (lena >= lenb) {
-                
+        String intermediary = stra.substring(0, digit);
+
+        while (digit <= lena) {
+            int count = 0;
+            while (AInteger.subtract(new AInteger(intermediary), new AInteger(strb)).isNegative == false) {
+                intermediary = AInteger.subtract(new AInteger(intermediary), new AInteger(strb)).value;
+                count++;
             }
             result += count;
-            lena--;
-        }
 
-        
+            if (digit < lena) {
+                intermediary += stra.charAt(digit);
+            }           
+            digit++;
+            
+        }            
 
         return new AInteger(result);
     }
     public static void main(String[] args) {
-        AInteger num1 = new AInteger("-123");
-        AInteger num2 = new AInteger("456");
+        AInteger num1 = new AInteger("-1223423423423423442342343");
+        AInteger num2 = new AInteger("45656855565230906000321267892363258741258963");
 
         AInteger sum = AInteger.add(num1, num2);
         System.out.println("Sum: " + sum.literal);
@@ -211,5 +235,8 @@ public class AInteger {
 
         AInteger product = AInteger.mul(num1, num2);
         System.out.println("Product: " + product.literal);
+
+        AInteger quotient = AInteger.div(num2, num1);
+        System.out.println("Quotient: " + quotient.literal);
     }
 }
