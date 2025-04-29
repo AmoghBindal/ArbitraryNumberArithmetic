@@ -234,6 +234,10 @@ public class AInteger {
 
         int digit = lenb;
 
+        if (lena < lenb) {
+            return new AInteger("0");
+        }
+
         String intermediary = stra.substring(0, digit);
 
         while (digit <= lena) {
