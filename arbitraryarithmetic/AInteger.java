@@ -2,12 +2,18 @@ package arbitraryarithmetic;
 
 public class AInteger {
 
-    public String literal;
-    public String value;
-    public boolean isNegative = false;
+    // This class represents an arbitrary-precision integer
+    // It can handle positive and negative integers
+    // It can handle addition, subtraction, multiplication, and division
+    // It can handle leading zeros
+    // It can handle negative numbers
+    // It can handle large integers
+    public String literal; // The original string representation of the number
+    public String value; // The string representation of the number without leading zeros
+    public boolean isNegative = false; // Flag to indicate if the number is negative
 
     public static String removeLeadingZeros(String number) {
-
+        // Remove leading zeros from the number
         int index = 0;
 
         while (index < number.length() && number.charAt(index) == '0') {
@@ -19,12 +25,13 @@ public class AInteger {
         return number.substring(index);
     }
     
-
+    // Constructor to create an AInteger object with a default value of 0
     public AInteger() {
         this.value = "0";
         this.literal = "0";
     }
 
+    // Constructor to create an AInteger object with a given string value
     public AInteger(String value) {
 
         value = removeLeadingZeros(value);
@@ -46,11 +53,11 @@ public class AInteger {
         } else if (value.charAt(0) == '+') {
             this.isNegative = false;
             this.value = value.substring(1);
-        }
-        else{
+        }else{
             this.value = value;
-            }        
+        }        
     }
+    // Copy constructor to create an AInteger object from another AInteger object
 
     public AInteger (AInteger aInteger) {
         this.literal = aInteger.literal;
@@ -58,15 +65,21 @@ public class AInteger {
         this.isNegative = aInteger.isNegative;
     }
 
+    // Constructor to create an AInteger object from another AInteger object
     public static AInteger parse(String s){
         return new AInteger(s);
     }
 
+    // Add two AInteger objects
+    // The method handles addition of two AInteger objects
+    // It checks the sign of the numbers and adds them accordingly
     public static AInteger add(AInteger a, AInteger b) {
         String result = "";
         String stra = a.value;
         String strb = b.value;
 
+        // Check Sign of the numbers, the code only handles positive numbers so if the input is negative
+        // it will convert it to positive and then add them
         if (a.isNegative && b.isNegative) {
             return new AInteger("-" + (AInteger.add(new AInteger(stra), new AInteger(strb))).value);
         } else if (a.isNegative) {
@@ -74,6 +87,8 @@ public class AInteger {
         } else if (b.isNegative) {
             return AInteger.subtract(new AInteger(a.value), new AInteger(b.value));
         }
+
+        //Normal addition
 
         int carry = 0;
 
@@ -101,6 +116,10 @@ public class AInteger {
         return new AInteger(result);
     }
 
+
+    // Subtract two AInteger objects
+    // again this only handles positive numbers so if the input is negative it 
+    // will change the sign and then subtract them or add them accordingly
     public static AInteger subtract(AInteger a, AInteger b) {
         String result = "";
         String stra = a.value;
@@ -114,6 +133,7 @@ public class AInteger {
             return AInteger.subtract(new AInteger(b.value), new AInteger(a.value));
         }
 
+        // Normal subtraction
         int borrow = 0;
 
         int i = stra.length() - 1;
@@ -145,6 +165,11 @@ public class AInteger {
 
         return new AInteger(result);
     }
+
+    // Multiply two AInteger objects
+    // The method handles multiplication of two AInteger objects
+    // It checks the sign of the numbers and multiplies them accordingly
+    // The method uses the standard multiplication algorithm
 
     public static AInteger mul(AInteger a, AInteger b) {
         String result = "";
@@ -182,6 +207,11 @@ public class AInteger {
 
 
     }
+
+    // Divide two AInteger objects
+    // The method handles division of two AInteger objects
+    // It checks the sign of the numbers and divides them accordingly
+    // The method uses the standard long division algorithm
 
     public static AInteger div(AInteger a, AInteger b) {
         String result = "";
