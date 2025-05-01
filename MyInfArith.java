@@ -19,16 +19,16 @@ public class MyInfArith {
                 AInteger int2 = new AInteger(operand2);
                 switch (op) {
                     case "add":
-                        System.out.println(AInteger.add(int1, int2).literal);
+                        System.out.println((int1.add(int2)).literal);
                         break;
                     case "sub":
-                        System.out.println(AInteger.subtract(int1, int2).literal);
+                        System.out.println((int1.subtract(int2)).literal);
                         break;
                     case "mul":
-                        System.out.println(AInteger.mul(int1, int2).literal);
+                        System.out.println((int1.mul(int2)).literal);
                         break;
                     case "div":
-                        System.out.println(AInteger.div(int1, int2).literal);
+                        System.out.println((int1.div(int2)).literal);
                         break;
                     default:
                         System.out.println("Unsupported operation for int: " + op);
@@ -40,16 +40,16 @@ public class MyInfArith {
                 AFloat float2 = new AFloat(operand2);
                 switch (op) {
                     case "add":
-                        System.out.println(AFloat.addF(float1, float2).literal);
+                        System.out.println((float1.add(float2)).literal);
                         break;
                     case "sub":
-                        System.out.println(AFloat.subF(float1, float2).literal);
+                        System.out.println((float1.sub(float2)).literal);
                         break;
                     case "mul":
-                        System.out.println(AFloat.mulF(float1, float2).literal);
+                        System.out.println((float1.mul(float2)).literal);
                         break;
                     case "div":
-                        System.out.println(AFloat.divF(float1, float2).literal);
+                        System.out.println((float1.div(float2)).literal);
                         break;
                     default:
                         System.out.println("Unsupported operation for float: " + op);

@@ -64,6 +64,7 @@ public class AFloat extends AInteger {
             this.digitsAfterDecimal = 0;
             this.valWODecimal = removeLeadingZeros(value);
         } else {
+            System.out.println("Invalid float format: " + value);
             throw new IllegalArgumentException("Invalid float format: " + value);
         }
     }
@@ -86,26 +87,32 @@ public class AFloat extends AInteger {
     // It Scales the First number to the size of the second without decimals and then
     // adds the two numbers using AInterger.add and places decimal accordingly
     // Again only positive numbers are added if a negative number occurs it is directed to the subtract function
-    public static AFloat addF(AFloat a, AFloat b) {
+    public AFloat add(AFloat b) {
         
 
-        if (a.isNegative && b.isNegative){
-            return new AFloat('-' + AFloat.addF(new AFloat(a.value), new AFloat(b.value)).value);
-        }else if (a.isNegative && !b.isNegative){
-            return AFloat.subF(new AFloat(b.value), new AFloat(a.value));
-        }else if (!a.isNegative && b.isNegative){
-            return AFloat.subF(new AFloat(a.value), new AFloat(b.value));
+        if (this.isNegative && b.isNegative){
+            AFloat a = new AFloat(this.value);
+            AFloat b1 = new AFloat(b.value);
+            return new AFloat('-' + a.add(b1).value);
+        }else if (this.isNegative && !b.isNegative){
+            AFloat a = new AFloat(this.value);
+            AFloat b1 = new AFloat(b.value);
+            return b1.sub(a);
+        }else if (!this.isNegative && b.isNegative){
+            AFloat a = new AFloat(this.value);
+            AFloat b1 = new AFloat(b.value);
+            return a.sub(b1);
         }
 
-        if (a.digitsAfterDecimal > b.digitsAfterDecimal) {
-            String intera = a.valWODecimal.substring(0, a.valWODecimal.length() - (a.digitsAfterDecimal - b.digitsAfterDecimal));
-            String inter = AInteger.add(AInteger.parse(intera), AInteger.parse(b.valWODecimal)).value;
-            inter += a.valWODecimal.substring(a.valWODecimal.length() - (a.digitsAfterDecimal - b.digitsAfterDecimal));
-            inter = inter.substring(0, inter.length() - a.digitsAfterDecimal) + "." + inter.substring(inter.length() - a.digitsAfterDecimal);
+        if (this.digitsAfterDecimal > b.digitsAfterDecimal) {
+            String intera = this.valWODecimal.substring(0, this.valWODecimal.length() - (this.digitsAfterDecimal - b.digitsAfterDecimal));
+            String inter = (AInteger.parse(intera)).add(AInteger.parse(b.valWODecimal)).value;
+            inter += this.valWODecimal.substring(this.valWODecimal.length() - (this.digitsAfterDecimal - b.digitsAfterDecimal));
+            inter = inter.substring(0, inter.length() - this.digitsAfterDecimal) + "." + inter.substring(inter.length() - this.digitsAfterDecimal);
             return new AFloat(inter);
-        } else if (a.digitsAfterDecimal <= b.digitsAfterDecimal) {
-            String aVal = a.valWODecimal + "0".repeat(b.digitsAfterDecimal - a.digitsAfterDecimal);
-            String inter  = AInteger.add(AInteger.parse(aVal), AInteger.parse(b.valWODecimal)).value;
+        } else if (this.digitsAfterDecimal <= b.digitsAfterDecimal) {
+            String aVal = this.valWODecimal + "0".repeat(b.digitsAfterDecimal - this.digitsAfterDecimal);
+            String inter  = (AInteger.parse(aVal)).add(AInteger.parse(b.valWODecimal)).value;
             inter = inter.substring(0, inter.length() - b.digitsAfterDecimal) + "." + inter.substring(inter.length() - b.digitsAfterDecimal);
             return new AFloat(inter);
         }
@@ -117,32 +124,32 @@ public class AFloat extends AInteger {
     // If decimal part is negative then the integer part is decremented by 1 and is added to the decimal part
     // Again only positive numbers are subtracted if a negative number occurs it is directed to the add function
     // The result is then returned as a new AFloat object
-    public static AFloat subF(AFloat a, AFloat b) {
-        if (a.isNegative && b.isNegative){
-            return AFloat.subF(new AFloat(b.value), new AFloat(a.value));
-        }else if (a.isNegative && !b.isNegative){
-            return new AFloat('-' + AFloat.addF(new AFloat(a.value), new AFloat(b.value)).value);
-        }else if (!a.isNegative && b.isNegative){
-            return AFloat.addF(new AFloat(a.value), new AFloat(b.value));
+    public AFloat sub( AFloat b) {
+        if (this.isNegative && b.isNegative){
+            return (AFloat.parse(b.value)).sub(AFloat.parse(this.value));
+        }else if (this.isNegative && !b.isNegative){
+            return new AFloat('-' + ((AFloat.parse(this.value)).add(AFloat.parse(b.value))).value);
+        }else if (!this.isNegative && b.isNegative){
+            return AFloat.parse(this.value).add(AFloat.parse(b.value));
         }
-        String intparta = a.valWODecimal.substring(0, a.valWODecimal.length() - a.digitsAfterDecimal);
+        String intparta = this.valWODecimal.substring(0, this.valWODecimal.length() - this.digitsAfterDecimal);
         String intpartb = b.valWODecimal.substring(0, b.valWODecimal.length() - b.digitsAfterDecimal);
-        String decparta = a.valWODecimal.substring(a.valWODecimal.length() - a.digitsAfterDecimal);
+        String decparta = this.valWODecimal.substring(this.valWODecimal.length() - this.digitsAfterDecimal);
         String decpartb = b.valWODecimal.substring(b.valWODecimal.length() - b.digitsAfterDecimal);
 
-        if (a.digitsAfterDecimal > b.digitsAfterDecimal) {
-            decpartb += "0".repeat(a.digitsAfterDecimal - b.digitsAfterDecimal);
-        } else if (a.digitsAfterDecimal < b.digitsAfterDecimal) {
-            decparta += "0".repeat(b.digitsAfterDecimal - a.digitsAfterDecimal);
+        if (this.digitsAfterDecimal > b.digitsAfterDecimal) {
+            decpartb += "0".repeat(this.digitsAfterDecimal - b.digitsAfterDecimal);
+        } else if (this.digitsAfterDecimal < b.digitsAfterDecimal) {
+            decparta += "0".repeat(b.digitsAfterDecimal - this.digitsAfterDecimal);
         }
-        AInteger decpart = AInteger.subtract(AInteger.parse(decparta), AInteger.parse(decpartb));
+        AInteger decpart = (AInteger.parse(decparta)).subtract(AInteger.parse(decpartb));
         
-        AInteger intpart = AInteger.subtract(AInteger.parse(intparta), AInteger.parse(intpartb));
+        AInteger intpart = (AInteger.parse(intparta)).subtract(AInteger.parse(intpartb));
 
         if (decpart.isNegative){
-            String temp = 1 + "0".repeat(Math.max(a.digitsAfterDecimal, b.digitsAfterDecimal));
-            decpart = AInteger.add(AInteger.parse(temp), decpart);
-            intpart = AInteger.subtract(intpart, AInteger.parse("1"));
+            String temp = 1 + "0".repeat(Math.max(this.digitsAfterDecimal, b.digitsAfterDecimal));
+            decpart = (AInteger.parse(temp)).add(decpart);
+            intpart = intpart.subtract(AInteger.parse("1"));
             return new AFloat(intpart.literal + '.' + decpart.value);
         }
         return new AFloat(intpart.literal + '.' + decpart.value);
@@ -152,15 +159,15 @@ public class AFloat extends AInteger {
     // It Multiplies the two numbers using AInteger.mul and then places the decimal point accordingly
     // The result is then returned as a new AFloat object
     // Again only positive numbers are multiplied if a negative number occurs it is multiplied and a - is added to the result
-    public static AFloat mulF(AFloat a, AFloat b){
-        if (a.isNegative && b.isNegative){
-            return AFloat.mulF(new AFloat(a.value), new AFloat(b.value));
-        }else if (a.isNegative && !b.isNegative || !a.isNegative && b.isNegative){
-            return new AFloat('-' + AFloat.mulF(new AFloat(a.value), new AFloat(b.value)).value);           
+    public AFloat mul(AFloat b){
+        if (this.isNegative && b.isNegative){
+            return AFloat.parse(this.value).mul(AFloat.parse(b.value));
+        }else if (this.isNegative && !b.isNegative || !this.isNegative && b.isNegative){
+            return new AFloat('-' + (AFloat.parse(this.value).mul(AFloat.parse(b.value))).value);           
         }
-        String inter = AInteger.mul(AInteger.parse(a.valWODecimal), AInteger.parse(b.valWODecimal)).value;
+        String inter = ((AInteger.parse(this.valWODecimal)).mul(AInteger.parse(b.valWODecimal))).value;
 
-        inter = inter.substring(0, inter.length() - (a.digitsAfterDecimal + b.digitsAfterDecimal)) + "." + inter.substring(inter.length() - (a.digitsAfterDecimal + b.digitsAfterDecimal));
+        inter = inter.substring(0, inter.length() - (this.digitsAfterDecimal + b.digitsAfterDecimal)) + "." + inter.substring(inter.length() - (this.digitsAfterDecimal + b.digitsAfterDecimal));
         return new AFloat(inter);
     }
 
@@ -169,17 +176,17 @@ public class AFloat extends AInteger {
     // the First number is taken upto the precision of the second numbers decimal part + 30 and then divided ensuring 30 decimal places at the end 
     // The result is then returned as a new AFloat object
     // Again only positive numbers are divided if a negative number occurs it is divided and a - is added to the result
-    public static AFloat divF(AFloat a, AFloat b){
-        if (a.isNegative && b.isNegative){
-            return AFloat.divF(new AFloat(a.value), new AFloat(b.value));
-        }else if (a.isNegative && !b.isNegative || !a.isNegative && b.isNegative){
-            return new AFloat('-' + AFloat.divF(new AFloat(a.value), new AFloat(b.value)).value);           
+    public AFloat div(AFloat b){
+        if (this.isNegative && b.isNegative){
+            return AFloat.parse(this.value).div(AFloat.parse(b.value));
+        }else if (this.isNegative && !b.isNegative || !this.isNegative && b.isNegative){
+            return new AFloat('-' + (AFloat.parse(this.value).div(AFloat.parse(b.value))).value);           
         }
-        int k = a.digitsAfterDecimal - b.digitsAfterDecimal - 30;
+        int k = this.digitsAfterDecimal - b.digitsAfterDecimal - 30;
         if ( k < 0){
-            String intera = a.valWODecimal + "0".repeat(Math.abs(k));
+            String intera = this.valWODecimal + "0".repeat(Math.abs(k));
             
-            AInteger inter = AInteger.div(new AInteger(intera), new AInteger(b.valWODecimal));
+            AInteger inter = (AInteger.parse(intera).div(AInteger.parse(b.valWODecimal)));
             intera = inter.value;
 
             if (intera.length() <= 30){
@@ -190,9 +197,9 @@ public class AFloat extends AInteger {
             intera = intera.substring(0, intera.length() - 30) + "." + intera.substring(intera.length() - 30);
             return new AFloat(intera);
         }else{
-            String intera = a.valWODecimal;
+            String intera = this.valWODecimal;
             intera = intera.substring(0, intera.length() - k);
-            AInteger inter = AInteger.div(new AInteger(intera), new AInteger(b.valWODecimal));
+            AInteger inter = AInteger.parse(intera).div(AInteger.parse(b.valWODecimal));
             intera = inter.value;
             if (intera.length() <= 30){
                 intera = "0".repeat(30 - intera.length()) + intera;
@@ -206,10 +213,10 @@ public class AFloat extends AInteger {
     public static void main(String[] args) {
         AFloat a = new AFloat("3.6");
         AFloat b = new AFloat("7.2");
-        System.out.println(AFloat.addF(a, b).literal); // 912.468
-        System.out.println(AFloat.subF(a, b).literal); // -665.556
-        System.out.println(AFloat.mulF(a, b).literal); // 97377.635872
-        System.out.println(AFloat.divF(a, b).literal); // 0.156793
+        System.out.println(a.add(b).literal); // 912.468
+        System.out.println(a.sub(b).literal); // -665.556
+        System.out.println(a.mul(b).literal); // 97377.635872
+        System.out.println(a.div(b).literal); // 0.156793
     }
 
 

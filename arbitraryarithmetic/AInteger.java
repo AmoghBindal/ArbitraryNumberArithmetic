@@ -73,19 +73,22 @@ public class AInteger {
     // Add two AInteger objects
     // The method handles addition of two AInteger objects
     // It checks the sign of the numbers and adds them accordingly
-    public static AInteger add(AInteger a, AInteger b) {
+    public AInteger add(AInteger b) {
         String result = "";
-        String stra = a.value;
-        String strb = b.value;
+        String stra = this.value;
+        String strb = b.value;;
 
         // Check Sign of the numbers, the code only handles positive numbers so if the input is negative
         // it will convert it to positive and then add them
-        if (a.isNegative && b.isNegative) {
-            return new AInteger("-" + (AInteger.add(new AInteger(stra), new AInteger(strb))).value);
-        } else if (a.isNegative) {
-            return AInteger.subtract(new AInteger (b.value), new AInteger (a.value));
+        if (this.isNegative && b.isNegative) {
+            AInteger a = new AInteger(stra);
+            return new AInteger("-" + (a.add( new AInteger(strb))).value);
+        } else if (this.isNegative) {
+            AInteger a = new AInteger(this.value);
+            return b.subtract(a);
         } else if (b.isNegative) {
-            return AInteger.subtract(new AInteger(a.value), new AInteger(b.value));
+            AInteger b1 = new AInteger(b.value);
+            return this.subtract(b1);
         }
 
         //Normal addition
@@ -120,17 +123,23 @@ public class AInteger {
     // Subtract two AInteger objects
     // again this only handles positive numbers so if the input is negative it 
     // will change the sign and then subtract them or add them accordingly
-    public static AInteger subtract(AInteger a, AInteger b) {
+    public AInteger subtract( AInteger b) {
         String result = "";
-        String stra = a.value;
+        String stra = this.value;
         String strb = b.value;
 
-        if (a.isNegative && !(b.isNegative)){
-            return new AInteger("-" + (AInteger.add(new AInteger(stra), new AInteger(strb))).value);
-        } else if (!(a.isNegative) && b.isNegative) {
-            return AInteger.add(new AInteger(a.value), new AInteger(b.value));
-        } else if (a.isNegative && b.isNegative) {
-            return AInteger.subtract(new AInteger(b.value), new AInteger(a.value));
+        if (this.isNegative && !(b.isNegative)){
+            AInteger a = new AInteger(stra);
+            AInteger b1 = new AInteger(b.value);
+            return new AInteger("-" + (a.add(b1)).value);
+        } else if (!(this.isNegative) && b.isNegative) {
+            AInteger a1 = new AInteger(this.value);
+            AInteger b1 = new AInteger(b.value);
+            return a1.add(b1);
+        } else if (this.isNegative && b.isNegative) {
+            AInteger a = new AInteger(stra);
+            AInteger b1 = new AInteger(b.value);
+            return b1.subtract(a);
         }
 
         // Normal subtraction
@@ -158,12 +167,16 @@ public class AInteger {
             result = diff + result;
         }
         if ( borrow != 0) {
-            AInteger resultobj = AInteger.subtract(b, a);
+            AInteger a1 = new AInteger(this);
+            AInteger b1 = new AInteger(b);
+
+            AInteger resultobj = b1.subtract(a1);
             result = resultobj.value;
             result = "-" + result;
         }
 
-        return new AInteger(result);
+        AInteger res = new AInteger(result);
+        return res;
     }
 
     // Multiply two AInteger objects
@@ -171,19 +184,20 @@ public class AInteger {
     // It checks the sign of the numbers and multiplies them accordingly
     // The method uses the standard multiplication algorithm
 
-    public static AInteger mul(AInteger a, AInteger b) {
+    public AInteger mul( AInteger b) {
         String result = "";
-        String stra = a.value;
+        String stra = this.value;
         String strb = b.value;
 
-        if (a.isNegative && b.isNegative) {
-            return new AInteger(AInteger.mul(new AInteger(stra), new AInteger(strb)).value);
-        } else if (a.isNegative) {
-            return new AInteger("-" + (AInteger.mul(new AInteger(stra), new AInteger(strb))).value);
-        } else if (b.isNegative) {
-            return new AInteger("-" + (AInteger.mul(new AInteger(stra), new AInteger(strb))).value);
+        if (this.isNegative && b.isNegative) {
+            AInteger a1 = new AInteger(stra);
+            AInteger b1 = new AInteger(strb);
+            return new AInteger(a1.mul(b1).value);
+        } else if (this.isNegative || b.isNegative) {
+            AInteger a1 = new AInteger(stra);
+            AInteger b1 = new AInteger(strb);
+            return new AInteger("-" + (a1.mul(b1)).value);
         }
-
         for (int i = stra.length() - 1; i >= 0; i--) {
             int digit1 = stra.charAt(i) - '0';
             String tempResult = "";
@@ -200,7 +214,9 @@ public class AInteger {
             for (int k = 0; k < stra.length() - 1 - i; k++) {
                 tempResult += "0";
             }
-            result = AInteger.add(new AInteger(result), new AInteger(tempResult)).value;
+            AInteger interres = new AInteger (result);
+            AInteger temp = new AInteger(tempResult);
+            result = interres.add(temp).value;
         }
 
         return new AInteger(result);
@@ -213,23 +229,25 @@ public class AInteger {
     // It checks the sign of the numbers and divides them accordingly
     // The method uses the standard long division algorithm
 
-    public static AInteger div(AInteger a, AInteger b) {
+    public AInteger div(AInteger b) {
         String result = "";
-        String stra = a.value;
+        String stra = this.value;
         String strb = b.value;
+        AInteger b1 = new AInteger(b.value);
         int lena = stra.length();
         int lenb = strb.length();
 
-        if (b.value.equals("0")) {
-            throw new ArithmeticException("Division by zero");
+        if (b.value == "0") {
+            System.out.println("Division by zero is not allowed");
+            return new AInteger("0");
         }
 
-        if (a.isNegative && b.isNegative) {
-            return new AInteger(AInteger.div(new AInteger(stra), new AInteger(strb)).value);
-        } else if (a.isNegative) {
-            return new AInteger("-" + (AInteger.div(new AInteger(stra), new AInteger(strb))).value);
-        } else if (b.isNegative) {
-            return new AInteger("-" + (AInteger.div(new AInteger(stra), new AInteger(strb))).value);
+        if (this.isNegative && b.isNegative) {
+            AInteger a1 = new AInteger(stra);
+            return new AInteger(a1.div(b1).value);
+        } else if (this.isNegative || b.isNegative) {
+            AInteger a1 = new AInteger(stra);
+            return new AInteger("-" + (a1.div(b1)).value);
         }
 
         int digit = lenb;
@@ -242,14 +260,16 @@ public class AInteger {
 
         while (digit <= lena) {
             int count = 0;
-            while (AInteger.subtract(new AInteger(intermediary), new AInteger(strb)).isNegative == false) {
-                intermediary = AInteger.subtract(new AInteger(intermediary), new AInteger(strb)).value;
+            AInteger intermediaryobj = new AInteger(intermediary);
+            intermediaryobj = intermediaryobj.subtract(b1);
+            while (intermediaryobj.isNegative == false && count < 15) {
+                intermediaryobj = intermediaryobj.subtract(b1);
                 count++;
             }
             result += count;
 
             if (digit < lena) {
-                intermediary += stra.charAt(digit);
+                intermediary = (intermediaryobj.add(b1)).value + stra.charAt(digit);
             }           
             digit++;
             
@@ -258,19 +278,21 @@ public class AInteger {
         return new AInteger(result);
     }
     public static void main(String[] args) {
-        AInteger num1 = new AInteger("-1223423423423423442342343");
-        AInteger num2 = new AInteger("45656855565230906000321267892363258741258963");
+        AInteger num1 = new AInteger("10");
+        AInteger num2 = new AInteger("1100");
 
-        AInteger sum = AInteger.add(num1, num2);
+        AInteger sum = num1.add(num2);
         System.out.println("Sum: " + sum.literal);
 
-        AInteger diff = AInteger.subtract(num1, num2);
+        AInteger diff = num1.subtract(num2);
         System.out.println("Difference: " + diff.literal);
 
-        AInteger product = AInteger.mul(num1, num2);
-        System.out.println("Product: " + product.literal);
+        AInteger prod = num1.mul(num2);
+        System.out.println("Product: " + prod.literal);
 
-        AInteger quotient = AInteger.div(num2, num1);
-        System.out.println("Quotient: " + quotient.literal);
+        AInteger quot = num2.div(num1);
+        System.out.println("Quotient: " + quot.literal);
     }
+
+    
 }
